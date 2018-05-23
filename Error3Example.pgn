@@ -1,0 +1,6 @@
+
+// Error: cannot parse / operator as a variable
+if (/) {
+  error("???")
+}
+

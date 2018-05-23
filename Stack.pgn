@@ -1,0 +1,57 @@
+// Stack constructor
+function Stack() {
+
+  // StackNode constructor
+  function StackNode() {
+    struct {
+      var next
+      var value
+    }
+  }
+  
+  struct {
+    var head
+    var size
+    
+    function push(value) {
+      var newNode = StackNode()
+      newNode.value = value
+      
+      if (size == 0) {
+        head = newNode
+      }
+      else {
+        newNode.next = head
+        head = newNode
+      }
+      
+      size = size + 1
+      value
+    }
+    
+    function pop() {
+      var value = head.value
+      
+      if (size == 1) {
+        head = 0
+      }
+      else {
+        head = head.next
+      }
+      
+      size = size - 1
+      value
+    }
+    
+    function peek() {
+      head.value
+    }
+    
+    function getSize() {
+      size
+    }
+  
+  }
+}
+
+

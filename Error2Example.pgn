@@ -1,0 +1,5 @@
+
+// Error: attempting to define a variable with the same name as a language
+// keyword
+var function = "value"
+

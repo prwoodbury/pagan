@@ -1,0 +1,104 @@
+
+// Include the Dictionary program code
+@Dictionary.pgn
+
+// Construct the dictionary
+var dic = Dictionary()
+
+// <1> Confirm dictionary is empty
+println("<1> dic.getSize(), initial: ", dic.getSize())
+
+// Insert some values
+dic.insert("Red", 1)
+dic.insert("Orange", 2)
+dic.insert("Yellow", 3)
+dic.insert("Green", 4)
+dic.insert("Blue", 5)
+dic.insert("Indigo", 6)
+dic.insert("Violet", 7)
+
+// <2> Size should now be 7
+println("<2> dic.getSize(), after insertion: ", dic.getSize())
+
+// <3> Print pre- and inorder traversals of tree to confirm its shape
+
+print("<3> Preorder: ")
+dic.printPreorder()
+println()
+
+print("    Inorder:  ")
+dic.printInorder()
+println()
+
+// <4> Retrieve some values
+println("<4> Orange is ", dic.find("Orange"))
+println("    Indigo is ", dic.find("Indigo"))
+println("    Violet is ", dic.find("Violet"))
+
+// Remove some values
+dic.remove("Orange")
+dic.remove("Indigo")
+dic.remove("Violet")
+
+// <5> Size should now be 4
+println("<5> dic.getSize(), after removal: ", dic.getSize())
+
+// <6> Print new structure
+
+print("<6> Preorder: ")
+dic.printPreorder()
+println()
+
+print("    Inorder:  ")
+dic.printInorder()
+println()
+
+// Insert some replacement values
+
+dic.insert("Chen", 2)
+dic.insert("Ran", "EX")
+dic.insert("Yukari", "PHN")
+
+// <7> Size should now be 7
+println("<7> dic.getSize(), after insertion: ", dic.getSize())
+
+// <8> Print new structure
+
+print("<8> Preorder: ")
+dic.printPreorder()
+println()
+
+print("    Inorder:  ")
+dic.printInorder()
+println()
+
+// <9> Retrieve some values
+println("<9> Chen is ", dic.find("Chen"))
+println("    Ran is ", dic.find("Ran"))
+println("    Yukari is ", dic.find("Yukari"))
+
+// Destroy everything
+dic.remove("Red")
+dic.remove("Yellow")
+dic.remove("Green")
+dic.remove("Blue")
+dic.remove("Chen")
+dic.remove("Ran")
+dic.remove("Yukari")
+
+// <10> Size should now be 0
+println("<10> dic.getSize(), after removal: ", dic.getSize())
+
+// Build a big dictionary
+var i = 0
+while (i < 200) {
+  dic.insert(i, "" + i)
+  i = i + 1
+}
+
+// <11> Size should now be 200
+println("<11> dic.getSize(), after insertion: ", dic.getSize())
+
+// <12> Get some value
+println("<12> 124 is ", dic.find(124))
+

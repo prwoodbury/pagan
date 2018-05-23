@@ -1,0 +1,48 @@
+
+var value = 25
+
+// Simple if statement
+print(" <1>: ")
+if (value == 25) println("passed")
+
+// Block if statement
+print(" <2>: ")
+if (value == 25) {
+  print("pas")
+  println("sed")
+}
+
+// Block if statement with an else
+print(" <3>: ")
+if (value == 22) {
+  print("FAILED")
+}
+else {
+  print("pas")
+  println("sed")
+}
+
+// Block if statement with a simple else
+print(" <4>: ")
+if (value == 1) {
+  print("FAILED")
+}
+else println("passed")
+
+
+// Block if statement with a chained else-if and nested if
+print(" <5>: ")
+if (value == 1) {
+  print("FAILED")
+}
+else if (value == 24) {
+  print("FAILED2")
+}
+else if (value > 25) print("FAILED3")
+     else {
+       print("pas")
+       println("sed")
+     }
+
+
+

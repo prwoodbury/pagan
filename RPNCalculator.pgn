@@ -1,0 +1,145 @@
+
+// Include the Stack program code
+@Stack.pgn
+
+//*********************************
+// Helpers
+//*********************************
+
+function isDigit(next) {
+  if ((next == "0")
+       | (next == "1")
+       | (next == "2")
+       | (next == "3")
+       | (next == "4")
+       | (next == "5")
+       | (next == "6")
+       | (next == "7")
+       | (next == "8")
+       | (next == "9")) {
+    1
+  }
+  else {
+    0
+  }
+}
+
+function isOperator(next) {
+  if ((next == "+")
+       | (next == "-")
+       | (next == "*")
+       | (next == "/")
+       | (next == "^")) {
+    1
+  }
+  else {
+    0
+  }
+}
+
+function pow(base, exponent) {
+  if (exponent == 0) {
+    1
+  }
+  else {
+    var origBase = base
+    while (exponent > 1) {
+      base = base * origBase
+      exponent = exponent - 1
+    }
+    base
+  }
+}
+
+function toInt(str) {
+  0 + str
+}
+
+function toString(value) {
+  "" + value
+}
+
+function doCalculation(stack, operator) {
+  var second = toInt(stack.pop())
+  var first = toInt(stack.pop())
+  
+  var value
+  if (operator == "+") {
+    value = first + second
+  }
+  else if (operator == "-") {
+    value = first - second
+  }
+  else if (operator == "*") {
+    value = first * second
+  }
+  else if (operator == "/") {
+    value = first / second
+  }
+  else if (operator == "^") {
+    value = pow(first, second)
+  }
+  
+  stack.push(value)
+}
+
+
+var stack = Stack()
+
+// Read the input string
+var input = readStdInput()
+
+// Get string length
+var inputLength = stringLength(input)
+
+while (inputLength > 0) {
+
+  // Iterate over input characters
+  var i = 0
+  while (i < inputLength) {
+    var next = getStringCharacter(input, i)
+    
+    // operators
+    if (isOperator(next)) {
+      doCalculation(stack, next)
+    }
+    // numbers
+    else if (isDigit(next)) {
+      var numString = next
+      
+      // read a number
+      i = i + 1
+      if (i < inputLength) {
+        next = getStringCharacter(input, i)
+        while ((i < inputLength) & (isDigit(next))) {
+          numString = (numString + next)
+          println(numString)
+          
+          i = i + 1
+          next = getStringCharacter(input, i)
+        }
+      }
+      // allow iterator value to be corrected at end of loop
+      i = i - 1
+      
+      // push to stack
+      stack.push(numString)
+    }
+    else {
+      // ignore unrecognized characters
+    }
+    
+    i = i + 1
+  }
+  
+  // Read next
+  input = readStdInput()
+  inputLength = stringLength(input)
+}
+
+println("Result: ", stack.pop())
+
+//println(stringLength(str))
+//println(getStringCharacter(str, 0))
+
+

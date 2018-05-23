@@ -1,0 +1,132 @@
+program : statements
+
+
+
+statements : statement
+           | statement statements
+
+statement : expression
+          | ifStatement
+          | whileStatement
+          | block
+          | initializer
+          
+          
+          
+expression : primary
+           | primary operator expression
+           
+primary : STRING
+        | INTEGER
+        | VARIABLE
+        | VARIABLE functionCallSub
+        | VARIABLE DOT dotAccessList functionCallR
+        | unaryOperator primary
+        | OPEN_PAREN expression CLOSE_PAREN
+        | functionDefinition
+        | functionDefinition functionCallSub
+        | structDefinition
+        
+dotAccessList : VARIABLE
+              | VARIABLE DOT dotAccessList
+        
+functionCallSub: OPEN_PAREN optExpressionList CLOSE_PAREN functionCallR
+        
+functionCallR : OPEN_PAREN optExpressionList CLOSE_PAREN functionCallR
+              | *empty*
+        
+operator : PLUS
+         | MINUS
+         | STAR
+         | FORWARD_SLASH
+         | EQUALSEQUALS
+         | NOT_EQUALS
+         | EQUALS
+         | LEFT_ANGLEBRACKET
+         | RIGHT_ANGLEBRACKET
+         | LEFT_ANGLEBRACKETEQUALS
+         | RIGHT_ANGLEBRACKETEQUALS
+         | AMPERSAND
+         | PIPE
+         
+unaryOperator : PLUS
+              | MINUS
+              | EXCLAMATION_MARK
+
+optExpressionList : expressionList
+                  | *empty*
+                  
+expressionList : expression
+               | expression COMMA expressionList
+          
+          
+          
+functionDefinition : FUNCTION VARIABLE OPEN_PAREN optVariableList CLOSE_PAREN block
+                   | FUNCTION OPEN_PAREN optVariableList CLOSE_PAREN block
+                   
+                   
+          
+structDefinition : STRUCT VARIABLE block
+                 | STRUCT block
+
+optVariableList : variableList
+                | *empty*
+                
+variableList : VARIABLE
+             | VARIABLE COMMA variableList
+
+block : OPEN_CURLYBRACE optStatements CLOSE_CURLYBRACE
+
+optStatements : statements
+              | *empty*
+
+
+
+initializer : VAR VARIABLE
+            | VAR VARIABLE EQUALS expression
+
+
+
+ifStatement : IF OPEN_PAREN statement CLOSE_PAREN statement optElse
+
+optElse : ELSE statement
+        | *empty*
+        
+        
+
+whileStatement : WHILE OPEN_PAREN statement CLOSE_PAREN statement
+
+        
+
+              
+              
+              
+
+1-char terminals:
+  OPEN_PAREN
+  CLOSE_PAREN
+  PLUS
+  MINUS
+  STAR
+  EQUALS
+  LEFT_ANGLEBRACKET
+  RIGHT_ANGLEBRACKET
+  COMMA
+  OPEN_CURLYBRACE
+  CLOSE_CURLYBRACE
+  EXCLAMATION_MARK
+  AMPERSAND
+  PIPE
+  
+multi-char terminals:
+  EQUALSEQUALS
+  NOT_EQUALS
+  LEFT_ANGLEBRACKETEQUALS
+  RIGHT_ANGLEBRACKETEQUALS
+  FUNCTION
+  VAR
+  IF
+  ELSE
+  WHILE
+  STRUCT
+  

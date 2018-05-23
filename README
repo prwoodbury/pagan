@@ -1,0 +1,189 @@
+*******************************************************************************
+*                                    PAGAN                                    *
+*******************************************************************************
+by Patrick Woodbury (prwoodbury@crimson.ua.edu)
+
+(The Pagan logo is a Stonehenge monolith in the shape of the letter pi. Please
+imagine a beautiful ASCII art illustration of it here.)
+
+Pagan is pretty much C without semicolons, and half the useful features, and
+also it's very very slow and not useful except as a technical exercse. Luckily,
+that's exactly what it is!
+
+*******************************************************************************
+*                                  COMPILING                                  *
+*******************************************************************************
+Pagan is implemented in C++ and only designed to run on Unix-like systems
+(though it should compile with minimal effort on other platforms). GCC is its
+sole dependency. To compile, run make in the main directory; this should yield
+an executable named "pagan" in the same directory.
+
+Programs can be run in one of two ways:
+
+1. From an external file
+./pagan program.pgn
+
+2. From standard input
+./pagan < program.pgn
+
+*******************************************************************************
+*                               LANGUAGE DETAILS                              *
+*******************************************************************************
+Pagan is most easily explained in terms of its differences from C. The biggest
+distinctions are:
+* Dynamic typing
+* Semicolons are not used (for anything)
+* Functions as first-class objects
+* Implementation of some "object-oriented-like" features
+
+An example is probably more illustrative:
+
+  /* C-style block comment,
+     which runs until matching terminator */
+  // C++-style line comments are also allowed
+  
+  // Lines beginning with an @ symbol are preprocessor directives to include
+  // an external file
+  @ExternalFile.pgn
+
+  var globalVar         // Define new variables with the var keyword
+  var globalVar2 = 55   // Variable definitions may also include initializers
+
+  // Define functions with the function keyword
+  function f(a, b) {
+    var c = a + b      // Operators, parentheses, etc. function as expected
+    c = (c - a) * b + c / a
+    
+    // The result of the last statement of a function body is its return value
+    c
+  }
+
+  // Functions may be anonymous, and are first-class (can be assigned to
+  // variables, passed as parameters, etc.)
+  var f2 = function (parameter) { println(parameter) }
+  
+  f2(5)                // A function call
+  f2("train")          // Dynamic typing allows any type of parameter
+  f2(f2)               // This will print the function closure
+  
+  // if and else statements work as in C
+  if (0) print("single-statement if")
+  // conditions are evaluated using C rules (0 = false, anything else = true)
+  else if ((1 & 2) | 3) {
+    println("block if")
+  }
+  else {
+    println("else")
+  }
+  
+  // All iteration is done with while loops
+  while (0) {
+    println("z")
+  }
+  
+Pagan also provides structs, though they differ quite a bit from those in C.
+As in C, a struct acts as a container (environment) for arbitrary values, which
+may be accessed through the dot operator (.). Here is some example usage:
+  
+  // Define a struct named s
+  struct s {
+    var field1
+    var field2 = 2
+    
+    // Embedded struct: access as s.s2
+    struct s2 {
+      var field1 = 6
+      var field2
+    }
+  }
+  
+  println(s.field2)     // output: 2
+  s.field2 = 5
+  s.s2.field2 = 3
+  println(s.s2.field2)  // output: 3
+
+More interestingly, structs may also contain functions, which may similarly be
+accessed and called:
+  
+  struct s3 {
+    var v1 = 0
+  
+    function f() {
+      v1 = v1 + 1
+    }
+  }
+  
+  s3.f()   // s3.v1 is 1
+  s3.f()   // s3.v1 is 2
+  
+Structs are most useful when they are returned as the value of a constructor
+function, allowing them to be used in an "object-oriented" way:
+
+  // Constructor for Objects
+  function Object() {
+    // Return an anonymous struct
+    struct {
+      var v
+      
+      // "Member functions"
+      function getV() { v }
+      function setV(value) { v = value }
+      function complexCalculation(number) { v = ((v + v) * number) }
+      function copy(otherObject) { v = otherObject.v }
+    }
+  }
+  
+  var obj1 = Object()         // Construct a new Object
+  obj1.setV(10)
+  obj1.complexCalculation(22) // obj1.v is now 440
+  
+  var obj2 = Object()
+  obj2.copy(obj1)
+  println(obj2.getV())        // prints "440"
+  
+For more details, see the collection of programs in the main directory
+(extension .pgn), or the file "grammar" containing the Pagan grammar.
+
+*******************************************************************************
+*                                    BUILTINS                                 *
+*******************************************************************************
+print(...)
+  * Prints a variadic sequence of arguments to standard output. String and
+    integer literals print as expected; variables are evaluated and their
+    values printed appropriately; functions, structs, and anything else are
+    printed as verbosely as possible.
+
+println(...)
+  * Prints a variadic sequence of arguments followed by a newline.
+  
+prettyPrint(...)
+  * Attempts to print a variadic sequence of arguments as "pretty" code.
+  
+readStdInput()
+  * Reads and returns a string from standard input. The generated string is
+    equivalent to running (cin >> str) once in C++.
+  
+error(...)
+  * Prints a variadic sequence of arguments followed by a newline to standard
+    error, then terminates the program.
+
+Array(numElements)
+  * Allocates and returns a fixed-size array with the given number of elements.
+
+arrayGet(array, index)
+  * Retrieves the element of the given array at the given index. Arrays use
+    zero-based indices.
+
+arraySet(array, index, value)
+  * Sets the element of the given array at the given index to the given value.
+
+arrayDelete(array)
+  * Deallocates an array. Arrays may not be accessed after deletion.
+  
+stringLength(string)
+  * Returns the number of characters in the given string.
+  
+getStringCharacter(string, index)
+  * Returns the character at the given index of the given string as a string of
+    length 1.
+

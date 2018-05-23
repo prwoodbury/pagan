@@ -1,0 +1,29 @@
+
+// Construct an array of 50 values
+var array = Array(50)
+
+// Initialize values
+var i = 0
+while (i < 50) {
+  arraySet(array, i, i + 50)
+  i = i + 1
+}
+
+// Read some values
+println(" <1> arrayGet(array, 0) = ", arrayGet(array, 0))
+println(" <2> arrayGet(array, 22) = ", arrayGet(array, 22))
+println(" <3> arrayGet(array, 46) = ", arrayGet(array, 46))
+
+// Update some values
+arraySet(array, 0, 150)
+arraySet(array, 22, 172)
+arraySet(array, 46, 196)
+
+// Read values again
+println(" <4> arrayGet(array, 0) = ", arrayGet(array, 0))
+println(" <5> arrayGet(array, 22) = ", arrayGet(array, 22))
+println(" <6> arrayGet(array, 46) = ", arrayGet(array, 46))
+
+// Destroy array
+arrayDelete(array)
+

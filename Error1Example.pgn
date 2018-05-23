@@ -1,0 +1,6 @@
+
+// Error: no closing parenthesis after argument list
+function f(first, second {
+  first + second
+}
+

@@ -1,0 +1,590 @@
+
+//******************************************
+// Dictionary based on an AVL tree implementation.
+// Based on code from Goodrich, Tamassia &
+// Mount's Data Structures & Algorithms
+// in C++ (although not all that much --
+// what kind of programming book omits an
+// implementation of the restructure()
+// operation of an AVL tree? It's only
+// the most fundamental feature!)
+//******************************************
+function Dictionary() {
+  
+  //******************************************
+  // Supporting structures
+  //******************************************
+  
+  // AvlTreeNode constructor
+  function AvlTreeNode() {
+    struct {
+      
+      // Print the node's key/value representation
+      function printKeyValue() {
+        print("[", key, ",", value, "]")
+      }
+      
+      // Clone the node
+      function clone() {
+        var node = AvlTreeNode()
+        node.parent = parent
+        node.left = left
+        node.right = right
+        node.key = key
+        node.value = value
+        node.height = height
+        node
+      }
+    
+      var parent = "empty"
+      var left = "empty"
+      var right = "empty"
+      var key
+      var value
+      var height
+    }
+  }
+  
+  //******************************************
+  // Utilities
+  //******************************************
+
+  // Return the greater of two variables
+  function max(first, second) {
+    if (first > second) {
+      first
+    }
+    else {
+      second
+    }
+  }
+  
+  // Return the height of a node
+  function height(node) {
+    if (node == "empty") {
+      0
+    }
+    else {
+      node.height
+    }
+  }
+  
+  // Set the height of a node according to its position
+  function setHeight(node) {
+    var hl = height(node.left)
+    var hr = height(node.right)
+    node.height = (1 + max(hl, hr))
+  }
+  
+  // Detect whether the tree is balanced at a node
+  function isBalanced(node) {
+    var bal = height(node.left) - height(node.right)
+    if ((bal >= -1) & (bal <= 1)) {
+      1
+    }
+    else {
+      0
+    }
+  }
+  
+  //******************************************
+  // The returned structure (an empty tree)
+  //******************************************
+  
+  struct {
+    var root
+    var size
+  
+    //******************************************
+    // Public interface
+    //******************************************
+    
+    // Insert or update a key in the Dictionary to hold the given value.
+    function insert(key, value) {
+      
+      var node = AvlTreeNode()
+      node.key = key
+      node.value = value
+      
+      if (size == 0) {
+        root = node
+      }
+      else {
+        insertNode(node, root)
+      }
+      
+      size = size + 1
+    }
+    
+    // Remove the given key from the Dictionary.
+    // Does nothing if the key is not present.
+    function remove(key) {
+      if (size == 1) {
+        if (key == root.key) {
+          root = "empty"
+        }
+        else {
+//          error("Could not remove key '", key, "': not in tree")
+          "empty"
+        }
+      }
+      else {
+        removeKey(key, root)
+      }
+      
+      size = size - 1
+    }
+    
+    // Find the value of the given key.
+    // Causes an error if the key is not present.
+    function find(key) {
+      var node = findNode(key, root)
+      node.value
+    }
+    
+    // Return the total number of entries.
+    function getSize() {
+      size
+    }
+    
+    // Print a preorder traversal of the Dictionary's tree.
+    function printPreorder() {
+      printPreorderStep(root)
+    }
+    
+    // Print an inorder traversal of the Dictionary's tree.
+    function printInorder() {
+      printInorderStep(root)
+    }
+  
+    //******************************************
+    // "Private" members and functions (which are
+    // really public, since the language doesn't
+    // actually support data hiding)
+    //******************************************
+    
+    // Find the node with the given key, starting from the checkNode.
+    // Causes an error if the key is not present.
+    function findNode(key, checkNode) {
+      if (checkNode == "empty") {
+        error("Key '", key, "' is not in the dictionary")
+      }
+      else {
+        if (key < checkNode.key) {
+          findNode(key, checkNode.left)
+        }
+        else if (key > checkNode.key) {
+          findNode(key, checkNode.right)
+        }
+        else if (key == checkNode.key) {
+          checkNode
+        }
+        else {
+          error("Could not compare key '", key, "'")
+        }
+      }
+    }
+    
+    // Recursive step of printPreorder().
+    function printPreorderStep(node) {
+      if (node == "empty") {
+        0
+      }
+      else {
+//        print(node.key, " ")
+        node.printKeyValue()
+        print(" ")
+        printPreorderStep(node.left)
+        printPreorderStep(node.right)
+      }
+    }
+    
+    // Recursive step of printInorder().
+    function printInorderStep(node) {
+      if (node == "empty") {
+        0
+      }
+      else {
+//        print(node.key, " ")
+        printInorderStep(node.left)
+        node.printKeyValue()
+        print(" ")
+        printInorderStep(node.right)
+      }
+    }
+    
+    // Insert the given node into the tree, starting from checkNode.
+    function insertNode(node, checkNode) {
+      if (node.key < checkNode.key) {
+        if (checkNode.left == "empty") {
+          checkNode.left = node
+          node.parent = checkNode
+          rebalance(node)
+        }
+        else {
+          insertNode(node, checkNode.left)
+        }
+      }
+      else if (node.key > checkNode.key) {
+        if (checkNode.right == "empty") {
+          checkNode.right = node
+          node.parent = checkNode
+          rebalance(node)
+        }
+        else {
+          insertNode(node, checkNode.right)
+        }
+      }
+      else {
+//        error("Duplicate key: ", node.key)
+
+        // Duplicate key: leave old node but replace value
+        checkNode.value = node.value
+      }
+    }
+    
+    // Returns:
+    // 0 if checkNode has no parent
+    // 1 if checkNode is a right child
+    // 2 if checkNode is a left child
+    // -1 if an error occurs
+    function getChildStatus(checkNode) {
+      var lr = -1
+      if (checkNode.parent == "empty") {
+        lr = 0
+      }
+      else if (checkNode == checkNode.parent.right) {
+        lr = 1
+      }
+      else if (checkNode == checkNode.parent.left) {
+        lr = 2
+      }
+      
+      lr
+    }
+    
+    function rebalance(checkNode) {
+      
+      if (checkNode == "empty") {
+        "empty"
+      }
+      else {
+        setHeight(checkNode)
+        
+        if (!(isBalanced(checkNode))) {
+          var oldNode = checkNode.clone()
+          
+          // There are three possible cases for updating
+          // the affected node's parent:
+          // 0. The node has no parent (and therefore is the root,
+          // which must be updated accordingly)
+          // 1. The node is a left child
+          // 2. The node is a right child
+          // For 1 and 2, we must determine whether the node is
+          // a left or right child and update the corresponding
+          // pointer in the parent.
+          var lr = getChildStatus(checkNode)
+
+          // Perform the necessary rotations
+          checkNode = restructure(checkNode)
+          
+          // Update root or parent node as described above
+          if (lr == 0) {
+            root = checkNode
+          }
+          else if (lr == 1) {
+            checkNode.parent.right = checkNode
+          }
+          else if (lr == 2) {
+            checkNode.parent.left = checkNode
+          }
+          
+          // Update heights
+          setHeight(checkNode.left)
+          setHeight(checkNode.right)
+          setHeight(checkNode)
+        }
+        
+        // Perform operation recursively until the root is reached
+        rebalance(checkNode.parent)
+      }
+    }
+    
+    // Relabel the nodes from left to right (inorder)
+    function restructure(node) {
+      var zl = node.left
+      var zr = node.right
+
+      if (height(zl) >= height(zr)) {
+        // left-left (b)
+        if (height(zl.left) >= height(zl.right)) {
+          rightRotate(node.left, node)
+        }
+        // left-right (d)
+        else {
+          leftRightRotate(node.left.right, node.left, node)
+        }
+      }
+      else {
+        // right-right (a)
+        if (height(zr.right) >= height(zr.left)) {
+          leftRotate(node.right, node)
+        }
+        // right-left (c)
+        else {
+          rightLeftRotate(node.right.left, node.right, node)
+        }
+      }
+    }
+    
+    // Left rotate lower over upper
+    function leftRotate(lower, upper) {
+      var oldlower = lower.clone()
+      
+      lower.left = upper
+      lower.parent = upper.parent
+      upper.right = oldlower.left
+      
+      if (upper.right != "empty") {
+        upper.right.parent = upper
+      }
+      
+      upper.parent = lower
+      
+      lower
+    }
+    
+    // Right rotate lower over upper
+    function rightRotate(lower, upper) {
+      var oldlower = lower.clone()
+      
+      lower.right = upper
+      lower.parent = upper.parent
+      upper.left = oldlower.right
+      
+      if (upper.left != "empty") {
+        upper.left.parent = upper
+      }
+      
+      upper.parent = lower
+      
+      lower
+    }
+    
+    function leftRightRotate(lower, mid, upper) {
+      // left rotate lower over mid, then right rotate (new) mid over upper
+      
+      var oldlower = lower.clone()
+      
+      lower.left = mid
+      lower.right = upper
+      lower.parent = upper.parent
+      mid.right = oldlower.left
+      mid.parent = lower
+      upper.left = oldlower.right
+      upper.parent = lower
+      
+      // Update parent pointers if needed
+      
+      if (mid.right != "empty") {
+        mid.right.parent = mid
+      }
+      
+      if (upper.left != "empty") {
+        upper.left.parent = upper
+      }
+      
+      lower
+    }
+    
+    function rightLeftRotate(lower, mid, upper) {
+      // right rotate lower over mid, then left rotate (new) mid over upper
+      
+      var oldlower = lower.clone()
+      
+      lower.left = upper
+      lower.right = mid
+      lower.parent = upper.parent
+      mid.left = oldlower.right
+      mid.parent = lower
+      upper.right = oldlower.left
+      upper.parent = lower
+      
+      // Update parent pointers if needed
+      
+      if (mid.left != "empty") {
+        mid.left.parent = mid
+      }
+      
+      if (upper.right != "empty") {
+        upper.right.parent = upper
+      }
+      
+      lower
+    }
+    
+    // Find and remove the node with the given key, starting from
+    // the checkNode.
+    function removeKey(key, checkNode) {
+      if (checkNode == "empty") {
+//        error("Could not remove key '", key, "': not in tree")
+        "empty"
+      }
+      else {
+        if (key < checkNode.key) {
+          removeKey(key, checkNode.left)
+        }
+        else if (key > checkNode.key) {
+          removeKey(key, checkNode.right)
+        }
+        else if (key == checkNode.key) {
+          removeNode(checkNode)
+        }
+        else {
+          error("Could not compare key '", key, "'")
+        }
+      }
+    }
+    
+    // Update node (or the root if needed) so that its child pointer points
+    // to newChild.
+    // lr is the value returned by a previous call to getChildStatus() on
+    // the original node newChild is replacing.
+    function updateNodeParentage(lr, node, newChild) {
+      if (lr == 0) {
+        root = newChild
+      }
+      else if (lr == 1) {
+        node.parent.right = newChild
+      }
+      else if (lr == 2) {
+        node.parent.left = newChild
+      }
+    }
+    
+    // Find the successor of node (next value in an inorder traversal).
+    function findSuccessor(node) {
+      if (node.right == "empty") {
+        error("Tried to take successor of external node '", node.key, "'")
+      }
+      
+      // find leftmost child of right subtree
+      node = node.right
+      while (node.left != "empty") {
+        node = node.left
+      }
+      node
+    }
+    
+    // Remove the given node from the tree, rebalancing accordingly.
+    function removeNode(node) {
+      var parent = node.parent
+      var left = node.left
+      var right = node.right
+      
+      var lr = getChildStatus(node)
+      
+      // Removal of leaf
+      if ((left == "empty") & (right == "empty")) {
+//        println("leaf")
+        updateNodeParentage(lr, node, "empty")
+        rebalance(parent)
+      }
+      // Removal above externals
+      else if (left == "empty") {
+//        println("left empty")
+        node.right.parent = node.parent
+        updateNodeParentage(lr, node, node.right)
+        rebalance(node.right)
+      }
+      else if (right == "empty") {
+//        println("right empty")
+        node.left.parent = node.parent
+        updateNodeParentage(lr, node, node.left)
+        rebalance(node.left)
+      }
+      // Removal of proper internal node
+      else {
+//        println("internal")
+        var successor = findSuccessor(node)
+        node.key = successor.key
+        removeNode(successor)
+      }
+    }
+  }
+}
+
+//var tree = AvlTree()
+
+//println("here")
+// test case a
+/*tree.insert("a", 1)
+tree.insert("b", 2)
+tree.insert("c", 3)
+tree.insert("d", 4)
+tree.insert("e", 5)
+tree.insert("f", 6)
+tree.insert("g", 7)
+tree.insert("h", 7)
+tree.insert("i", 7)
+tree.insert("j", 7)
+tree.insert("k", 7)
+tree.insert("l", 7)
+tree.insert("m", 7)
+tree.insert("n", 7)
+tree.insert("o", 7)
+tree.insert("p", 7)
+tree.insert("q", 7)
+tree.insert("r", 7)
+tree.insert("s", 7)
+tree.insert("t", 7)
+tree.insert("u", 7)
+tree.insert("v", 7)
+tree.insert("w", 7)
+tree.insert("x", 7)
+tree.insert("y", 7)
+tree.insert("z", 7) */
+
+// test case b
+/*tree.insert("o", 7)
+tree.insert("n", 7)
+tree.insert("m", 7)
+tree.insert("l", 7)
+tree.insert("k", 7)
+tree.insert("j", 7)
+tree.insert("i", 7)
+tree.insert("h", 7)
+tree.insert("g", 7)
+tree.insert("f", 6)
+tree.insert("e", 5)
+tree.insert("d", 4)
+tree.insert("c", 3)
+tree.insert("b", 2)
+tree.insert("a", 1)*/
+
+// test case c
+/*tree.insert("m", 1)
+tree.insert("s", 2)
+tree.insert("p", 3)
+tree.insert("v", 4)
+tree.insert("u", 5)
+tree.insert("r", 6)
+tree.insert("n", 1) */
+
+// test case d
+/*tree.insert("p", 1)
+tree.insert("f", 2)
+tree.insert("i", 3)
+tree.insert("j", 4)
+tree.insert("l", 5)
+tree.insert("n", 6)
+tree.insert("e", 5)
+tree.insert("g", 6) */
+
+//tree.remove("f")
+//tree.remove("e")
+//tree.remove("z")
+
+//tree.printPreorder()
+
+
